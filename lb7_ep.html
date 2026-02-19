@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Лабораторная работа №7</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff0f0;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #f35592;
+        }
+        
+        .error-message {
+            color: #f44336;
+            font-size: 14px;
+            margin-top: 5px;
+            min-height: 20px;
+        }
+        
+        button {
+            background-color: #fb73a1;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        
+        button:hover {
+            background-color: #fa567f;
+        }
+        
+        .success-message {
+            background-color: #ffd0e6;
+            color: #93122c;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Лабораторная работа №7</h1>
+    <p style="text-align: center;">Работа с формами и валидация данных</p>
+    
+    <div class="form-container">
+        <form id="registrationForm">
+            <!-- Поле для имени -->
+            <div class="form-group">
+                <label for="name">Имя:</label>
+                <input type="text" id="name" name="name" placeholder="Введите ваше имя">
+                <div id="nameError" class="error-message"></div>
+            </div>
+            
+            <!-- Поле для email -->
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Введите ваш email">
+                <div id="emailError" class="error-message"></div>
+            </div>
+            
+            <!-- Поле для пароля -->
+            <div class="form-group">
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" name="password" placeholder="Введите пароль">
+                <div id="passwordError" class="error-message"></div>
+            </div>
+            
+            <!-- Кнопка отправки -->
+            <button type="submit" id="submitBtn">Зарегистрироваться</button>
+        </form>
+        
+        <!-- Сообщение об успешной регистрации -->
+        <div id="successMessage" class="success-message hidden">
+            Регистрация успешна!
+        </div>
+    </div>
+    
+    <script>
+        // Получаем ссылки на элементы формы
+        const form = document.getElementById('registrationForm');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        
+        // Получаем ссылки на элементы для вывода ошибок
+        const nameError = document.getElementById('nameError');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        
+        // Получаем ссылку на сообщение об успехе
+        const successMessage = document.getElementById('successMessage');
+        
+        // Функция для очистки всех сообщений об ошибках
+        function clearErrors() {
+            nameError.textContent = '';
+            emailError.textContent = '';
+            passwordError.textContent = '';
+        }
+        
+        // Функция для проверки формы
+        function validateForm() {
+            let isValid = true;
+            
+            // Очищаем предыдущие ошибки
+            clearErrors();
+            
+            // Получаем значения полей и убираем пробелы по краям
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            // Проверка имени
+            if (name === '') {
+                nameError.textContent = 'Имя не может быть пустым';
+                isValid = false;
+            } else if (name.length < 3) {
+                nameError.textContent = 'Имя должно содержать не менее 3 символов';
+                isValid = false;
+            }
+            
+            // Проверка email
+            if (email === '') {
+                emailError.textContent = 'Email не может быть пустым';
+                isValid = false;
+            } else if (!email.includes('@')) {
+                emailError.textContent = 'Email должен содержать символ @';
+                isValid = false;
+            }
+            
+            // Проверка пароля
+            if (password === '') {
+                passwordError.textContent = 'Пароль не может быть пустым';
+                isValid = false;
+            } else if (password.length < 6) {
+                passwordError.textContent = 'Пароль должен содержать не менее 6 символов';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        // Обработчик отправки формы
+        form.addEventListener('submit', function(event) {
+            // Отменяем стандартную отправку формы
+            event.preventDefault();
+            
+            // Скрываем предыдущее сообщение об успехе
+            successMessage.classList.add('hidden');
+            
+            // Проверяем форму
+            if (validateForm()) {
+                // Если данные корректны
+                successMessage.classList.remove('hidden');
+                
+                // Очищаем форму
+                form.reset();
+                
+                // Очищаем все ошибки (на всякий случай)
+                clearErrors();
+                
+                // Можно также вывести данные в консоль для проверки
+                console.log('Форма успешно отправлена!');
+            } else {
+                // Если есть ошибки, скрываем сообщение об успехе
+                successMessage.classList.add('hidden');
+                console.log('Форма содержит ошибки');
+            }
+        });
+        
+        // Дополнительно: очищаем ошибку при вводе текста
+        nameInput.addEventListener('input', function() {
+            nameError.textContent = '';
+        });
+        
+        emailInput.addEventListener('input', function() {
+            emailError.textContent = '';
+        });
+        
+        passwordInput.addEventListener('input', function() {
+            passwordError.textContent = '';
+        });
+    </script>
+</body>
+</html>
